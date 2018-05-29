@@ -15,7 +15,11 @@ Distributed under the MIT license (see LICENSE file)
 ;;; Thread Creation
 
 (defun %make-thread (function name)
-  (mezzano.supervisor:make-thread function :name name))
+  (mezzano.supervisor:make-thread
+   (lambda ()
+     (with-simple-restart (abort "Terminate thread ~S" (mezzano.supervisor:current-thread))
+       (funcall function)))
+   :name name))
 
 (defun current-thread ()
   (mezzano.supervisor:current-thread))
