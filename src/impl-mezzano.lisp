@@ -78,15 +78,13 @@ Distributed under the MIT license (see LICENSE file)
   (mezzano.supervisor:make-condition-variable name))
 
 (defun condition-wait (condition-variable lock &key timeout)
-  (signal-error-if-condition-wait-timeout timeout)
   (mezzano.supervisor:condition-wait
    condition-variable
    (if (recursive-lock-p lock)
        (recursive-lock-mutex lock)
-       lock))
+       lock)
+   timeout)
   t)
-
-(define-condition-wait-compiler-macro)
 
 (defun condition-notify (condition-variable)
   (mezzano.supervisor:condition-notify condition-variable))
