@@ -114,9 +114,10 @@ Distributed under the MIT license (see LICENSE file)
 
 (defun join-thread (thread)
   (signal-error-if-current-thread thread)
-  (loop
-     (when (not (thread-alive-p thread))
-       (return))
-     (sleep 0.1)))
+  ;; THREAD-JOIN can return non-lists if the thread was destroyed.
+  (let ((values (mezzano.supervisor:thread-join thread)))
+    (if (listp values)
+        (values-list values)
+        nil)))
 
 (mark-supported)
